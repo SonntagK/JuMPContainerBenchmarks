@@ -1,11 +1,11 @@
 module ModelBuilds
 
-using JuMP, CPLEX, Dictionaries, NamedDims
+using TestSpecDef, JuMP, CPLEX, Dictionaries, NamedDims, Gurobi, Mosek, MosekTools, Xpress
 
 export arrayModel, arrayModelLongName, arrayModelLongBasename, denseAxisArrayModel, denseAxisArrayModelLongBasename, denseAxisArrayModelLongName, denseAxisArrayModelLongNameShortBasename, denseAxisArrayModelStr20, dictModel, dictModelStr, dictionaryModel, namedDimsModel
 
 #core function that includes model build and optimization for various problem specifications
-function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool)
+function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -13,11 +13,28 @@ function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, 
 	#optimization		bool: shall the JuMP model be optimized
 
 
+
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= x[1:n]<=1)
@@ -33,7 +50,7 @@ function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, 
 
 end
 
-function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool)
+function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -43,9 +60,25 @@ function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n:
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m, 0<= verylooooooooongname[1:n]<=1,base_name = "x")
@@ -62,7 +95,7 @@ function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n:
 
 end
 
-function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool)
+function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -71,9 +104,25 @@ function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m, 0<= x[1:n]<=1,base_name = "VERYLOOOOOOOOONGNAME")
@@ -91,7 +140,7 @@ function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}
 end
 
 function denseAxisArrayModel(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
-	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool)
+	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -100,9 +149,25 @@ function denseAxisArrayModel(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tup
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= x[1:n]<=1, container = DenseAxisArray)
@@ -119,7 +184,7 @@ function denseAxisArrayModel(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tup
 end
 
 function denseAxisArrayModelLongName(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
-	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool)
+	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -128,9 +193,25 @@ function denseAxisArrayModelLongName(coeff::JuMP.Containers.DenseAxisArray{Float
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= verylooooooongname_x[1:n]<=1, container = DenseAxisArray)
@@ -148,7 +229,7 @@ function denseAxisArrayModelLongName(coeff::JuMP.Containers.DenseAxisArray{Float
 end
 
 function denseAxisArrayModelLongNameShortBasename(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
-	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool)
+	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -157,9 +238,25 @@ function denseAxisArrayModelLongNameShortBasename(coeff::JuMP.Containers.DenseAx
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= verylooooooongname_x[1:n]<=1, container = DenseAxisArray, base_name = "x")
@@ -177,7 +274,7 @@ function denseAxisArrayModelLongNameShortBasename(coeff::JuMP.Containers.DenseAx
 end
 
 function denseAxisArrayModelLongBasename(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
-	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool)
+	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -186,9 +283,25 @@ function denseAxisArrayModelLongBasename(coeff::JuMP.Containers.DenseAxisArray{F
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= x[1:n]<=1, container = DenseAxisArray, base_name = "VERYLOOOOOOOOONGNAME")
@@ -207,7 +320,7 @@ end
 
 function denseAxisArrayModelStr20(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{Array{String,1},Array{String,1}},Tuple{Dict{String,Int64},Dict{String,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{Array{String,1}},Tuple{Dict{String,Int64}}},
-	str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool)
+	str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -216,9 +329,25 @@ function denseAxisArrayModelStr20(coeff::JuMP.Containers.DenseAxisArray{Float64,
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 
 	@variable(m,0<= x[str_obj]<=1)
@@ -235,7 +364,7 @@ function denseAxisArrayModelStr20(coeff::JuMP.Containers.DenseAxisArray{Float64,
 	return(m)
 end
 
-function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directMode::Bool, optimization::Bool)
+function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -244,9 +373,25 @@ function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directM
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 	
 	x = Dict()
@@ -269,7 +414,7 @@ function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directM
 	return(m)
 end
 
-function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool)
+function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -278,9 +423,25 @@ function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 	
 	x = Dict()
@@ -302,7 +463,7 @@ function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array
 	return(m)
 end
 
-function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Dictionary{Int64,Float64}, n::Int64, directMode::Bool, optimization::Bool)
+function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Dictionary{Int64,Float64}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -311,9 +472,25 @@ function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Di
 
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 	
 	x = Dictionary(1:n,@variable(m, 0 <= x[1:n] <= 1))
@@ -329,7 +506,7 @@ function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Di
 	return(m)
 end
 
-function namedDimsModel(coeff::NamedDimsArray{(:x1, :x2),Float64,2,Array{Float64,2}}, bound::NamedDimsArray{(:x1,),Float64,1,Array{Float64,1}}, n::Int64, directMode::Bool, optimization::Bool)
+function namedDimsModel(coeff::NamedDimsArray{(:x1, :x2),Float64,2,Array{Float64,2}}, bound::NamedDimsArray{(:x1,),Float64,1,Array{Float64,1}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -338,9 +515,25 @@ function namedDimsModel(coeff::NamedDimsArray{(:x1, :x2),Float64,2,Array{Float64
 	
 	if directMode == false
 		m = Model();
-		set_optimizer(m, CPLEX.Optimizer)
+		if optimizer == CPLEX_opt
+			set_optimizer(m, CPLEX.Optimizer)
+		elseif optimizer == Gurobi_opt
+			set_optimizer(m, Gurobi.Optimizer)	
+		elseif optimizer == Mosek_opt
+			set_optimizer(m, Mosek.Optimizer)
+		elseif optimizer == Xpress_opt
+			set_optimizer(m, Xpress.Optimizer)
+		end
 	else
-		m = direct_model(CPLEX.Optimizer());
+		if optimizer == CPLEX_opt
+			m = direct_model(CPLEX.Optimizer());
+		elseif optimizer == Gurobi_opt
+			m = direct_model(Gurobi.Optimizer());
+		elseif optimizer == Mosek_opt
+			m = direct_model(Mosek.Optimizer());
+		elseif optimizer == Xpress_opt
+			m = direct_model(Xpress.Optimizer());
+		end
 	end
 	
 	x = NamedDimsArray{(:x2,)}(@variable(m, 0 <= x[1:n] <= 1))

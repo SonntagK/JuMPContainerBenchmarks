@@ -1,26 +1,8 @@
 module TestManager
 
-using ModelBuilds, HelperFunctions, JuMP, BenchmarkTools, Profile, JLD
+using ModelBuilds, HelperFunctions, TestSpecDef, JuMP, BenchmarkTools, Profile, JLD
 
-export TestSpec, Test, dataType, A, AL, ALB, DAA, DAAL, DAALS, DAALB, DAAS20, D, DS, DD, ND
-
-@enum dataType A AL ALB DAA DAAL DAALS DAALB DAAS20 D DS DD ND
-
-struct  TestSpec
-    dataTypeID::dataType
-    problemNbr::Int
-    benchMarkSeconds::Int
-    benchMarkSamples::Int
-    dataDict::String
-    directMode::Bool
-    optimization::Bool
-    writeToLpFile::Bool
-    writeToExcel::Bool
-    excelFile::String
-    excelLocation::String
-    sheetNbr::Int
-    writeProfileLog::Bool
-end
+export Test
 
 function Test(testSpec::TestSpec)
     dataTypeID = testSpec.dataTypeID
@@ -50,34 +32,35 @@ function Test(testSpec::TestSpec)
     sheetNbr = testSpec.sheetNbr
     writeProfileLog = testSpec.writeProfileLog
     objValue = 0.0
+    optimizer = testSpec.optimizer
 
     println("Start Test")
 
     if writeToLp == true
         if dataTypeID == A
-            model = arrayModel(coeff, bound, n, directMode, optimization)
+            model = arrayModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == AL
-            model = arrayModelLongName(coeff, bound, n, directMode, optimization)
+            model = arrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == ALB
-            model = arrayModelLongBasename(coeff, bound, n, directMode, optimization)
+            model = arrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAA
-            model = denseAxisArrayModel(coeff, bound, n, directMode, optimization)
+            model = denseAxisArrayModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAAL
-            model = denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization)
+            model = denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAALS
-            model = denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization)
+            model = denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAALB
-            model = denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization)
+            model = denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAAS20
-            model = denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization)
+            model = denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
         elseif dataTypeID == D
-            model = dictModel(coeff, bound, n, directMode, optimization)
+            model = dictModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DS
-            model = dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization)
+            model = dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
         elseif dataTypeID == DD
-            model = dictionaryModel(coeff, bound, n, directMode, optimization)
+            model = dictionaryModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == ND
-            model = namedDimsModel(coeff, bound, n, directMode, optimization)
+            model = namedDimsModel(coeff, bound, n, directMode, optimization, optimizer)
         end
 
         JuMP.write_to_file(model, LpFile)
@@ -94,29 +77,29 @@ function Test(testSpec::TestSpec)
         Profile.clear()
         
         if dataTypeID == A
-            @profile arrayModel(coeff, bound, n, directMode, optimization)
+            @profile arrayModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == AL
-            @profile arrayModelLongName(coeff, bound, n, directMode, optimization)
+            @profile arrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == ALB
-            @profile arrayModelLongBasename(coeff, bound, n, directMode, optimization)
+            @profile arrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAA
-            @profile denseAxisArrayModel(coeff, bound, n, directMode, optimization)
+            @profile denseAxisArrayModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAAL
-            @profile denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization)
+            @profile denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAALS
-            @profile denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization)
+            @profile denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAALB
-            @profile denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization)
+            @profile denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DAAS20
-            @profile denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization)
+            @profile denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
         elseif dataTypeID == D
-            @profile dictModel(coeff, bound, n, directMode, optimization)
+            @profile dictModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == DS
-            @profile dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization)
+            @profile dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
         elseif dataTypeID == DD
-            @profile dictionaryModel(coeff, bound, n, directMode, optimization)
+            @profile dictionaryModel(coeff, bound, n, directMode, optimization, optimizer)
         elseif dataTypeID == ND
-            @profile namedDimsModel(coeff, bound, n, directMode, optimization)
+            @profile namedDimsModel(coeff, bound, n, directMode, optimization, optimizer)
         end
 
         profileDir =  string("Results/ProfileLogs/", string(dataTypeID) ,"/", string(dataTypeID) ,"_", problemNbr ,".txt")
@@ -133,41 +116,41 @@ function Test(testSpec::TestSpec)
 
         #save in every case only the second benchmark
         if dataTypeID == A
-            @benchmark arrayModel($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark arrayModel($coeff, $bound, $n, $directMode, $optimization) 
+            @benchmark arrayModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark arrayModel($coeff, $bound, $n, $directMode, $optimization, $optimizer) 
         elseif dataTypeID == AL
-            @benchmark arrayModelLongName($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark arrayModelLongName($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark arrayModelLongName($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark arrayModelLongName($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == ALB
-            @benchmark arrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark arrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark arrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark arrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DAA
-            @benchmark denseAxisArrayModel($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark denseAxisArrayModel($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark denseAxisArrayModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark denseAxisArrayModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DAAL
-            @benchmark denseAxisArrayModelLongName($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark denseAxisArrayModelLongName($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark denseAxisArrayModelLongName($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark denseAxisArrayModelLongName($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DAALS
-            @benchmark denseAxisArrayModelLongNameShortBasename($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark denseAxisArrayModelLongNameShortBasename($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark denseAxisArrayModelLongNameShortBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark denseAxisArrayModelLongNameShortBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DAALB
-            @benchmark denseAxisArrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark denseAxisArrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark denseAxisArrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark denseAxisArrayModelLongBasename($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DAAS20
-            @benchmark denseAxisArrayModelStr20($coeff, $bound, $str_obj, $str_con, $directMode, $optimization)
-            benchmark = @benchmark denseAxisArrayModelStr20($coeff, $bound, $str_obj, $str_con, $directMode, $optimization)
+            @benchmark denseAxisArrayModelStr20($coeff, $bound, $str_obj, $str_con, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark denseAxisArrayModelStr20($coeff, $bound, $str_obj, $str_con, $directMode, $optimization, $optimizer)
         elseif dataTypeID == D
-            @benchmark dictModel($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark dictModel($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark dictModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark dictModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DS
-            @benchmark dictModelStr($coeff, $bound, $str_obj, $str_con, $directMode, $optimization)
-            benchmark = @benchmark dictModelStr($coeff, $bound, $str_obj, $str_con, $directMode, $optimization)
+            @benchmark dictModelStr($coeff, $bound, $str_obj, $str_con, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark dictModelStr($coeff, $bound, $str_obj, $str_con, $directMode, $optimization, $optimizer)
         elseif dataTypeID == DD
-            @benchmark dictionaryModel($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark dictionaryModel($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark dictionaryModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark dictionaryModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         elseif dataTypeID == ND
-            @benchmark namedDimsModel($coeff, $bound, $n, $directMode, $optimization)
-            benchmark = @benchmark namedDimsModel($coeff, $bound, $n, $directMode, $optimization)
+            @benchmark namedDimsModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
+            benchmark = @benchmark namedDimsModel($coeff, $bound, $n, $directMode, $optimization, $optimizer)
         end
 
 
