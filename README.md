@@ -4,7 +4,7 @@ I created this module to benchmark different container types, optimizers and opt
 
 # Motivation
 
-I just started using Julia/JuMP a few weeks ago and will have to use it to create and optimize linear models. Because I do not know which container types are the best for obtimization variables, coefficients and constraint respectively, which of the optimizers with acadmic license works the best and in general which options I should use, I have created some modules to help me perform benchmarks and save them in a readable form.
+I just started using Julia/JuMP a few weeks ago and will have to use it to create and optimize linear models. Because I do not know which container types are the best for the optimization variables, coefficients and constraints respectively, which of the optimizers work the best and in general which options I should use, I have created some modules to help me perform benchmarks and save them in a readable form.
 
 # Src
 
