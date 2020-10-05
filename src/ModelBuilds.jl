@@ -6,6 +6,8 @@ export arrayModel, arrayModelLongName, arrayModelLongBasename, denseAxisArrayMod
 
 #core function that includes model build and optimization for various problem specifications
 function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType A
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -51,6 +53,8 @@ function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, 
 end
 
 function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType AL
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -96,6 +100,8 @@ function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n:
 end
 
 function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType ALB
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -141,6 +147,8 @@ end
 
 function denseAxisArrayModel(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DAA
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -185,6 +193,8 @@ end
 
 function denseAxisArrayModelLongName(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DAAL
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -230,6 +240,8 @@ end
 
 function denseAxisArrayModelLongNameShortBasename(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DAALS
+	
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -275,6 +287,8 @@ end
 
 function denseAxisArrayModelLongBasename(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{UnitRange{Int64},UnitRange{Int64}},Tuple{Dict{Int64,Int64},Dict{Int64,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{UnitRange{Int64}},Tuple{Dict{Int64,Int64}}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DAALB
+	
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -321,6 +335,8 @@ end
 function denseAxisArrayModelStr20(coeff::JuMP.Containers.DenseAxisArray{Float64,2,Tuple{Array{String,1},Array{String,1}},Tuple{Dict{String,Int64},Dict{String,Int64}}},
 	bound::JuMP.Containers.DenseAxisArray{Float64,1,Tuple{Array{String,1}},Tuple{Dict{String,Int64}}},
 	str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DAAS20
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -365,6 +381,8 @@ function denseAxisArrayModelStr20(coeff::JuMP.Containers.DenseAxisArray{Float64,
 end
 
 function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType D
+
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -415,6 +433,8 @@ function dictModel(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, n::Int64, directM
 end
 
 function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array{String,1}, str_con::Array{String,1}, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DS
+	
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -464,6 +484,8 @@ function dictModelStr(coeff::Dict{Any,Any}, bound::Dict{Any,Any}, str_obj::Array
 end
 
 function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Dictionary{Int64,Float64}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType DD
+	
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
@@ -507,6 +529,8 @@ function dictionaryModel(coeff::Dictionary{CartesianIndex{2},Float64}, bound::Di
 end
 
 function namedDimsModel(coeff::NamedDimsArray{(:x1, :x2),Float64,2,Array{Float64,2}}, bound::NamedDimsArray{(:x1,),Float64,1,Array{Float64,1}}, n::Int64, directMode::Bool, optimization::Bool, optimizer::Optimizers)
+	#DataType ND
+	
 	#coeff 				matrix: for defintion of the linear constraints of the form coeff*x .<= bound
 	#bound 				array: for definition of constraints (see above)
 	#n 					integer: showing problem size
