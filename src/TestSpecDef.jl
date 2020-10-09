@@ -1,9 +1,8 @@
 module TestSpecDef
 
-export TestSpec, DataType, A, AL, ALB, DAA, DAAL, DAALS, DAALB, DAAS20, D, DS, DD, ND, Optimizers, CPLEX_opt, Gurobi_opt, Mosek_opt, Xpress_opt
+export TestSpec, DataType, A, AL, ALB, DAA, DAAL, DAALS, DAALB, DAAS20, D, DS, DD, ND
 
 @enum DataType A AL ALB DAA DAAL DAALS DAALB DAAS20 D DS DD ND
-@enum Optimizers CPLEX_opt Gurobi_opt Mosek_opt Xpress_opt
 
 struct  TestSpec
     dataTypeID::DataType
@@ -18,8 +17,6 @@ struct  TestSpec
     excelFile::String
     excelLocation::String
     sheetNbr::Int
-    writeProfileLog::Bool
-    optimizer::Optimizers
 end
 
 end

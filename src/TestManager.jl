@@ -38,29 +38,29 @@ function Test(testSpec::TestSpec)
 
     if writeToLp == true
         if dataTypeID == A
-            model = arrayModel(coeff, bound, n, directMode, optimization, optimizer)
+            model = arrayModel(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == AL
-            model = arrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
+            model = arrayModelLongName(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == ALB
-            model = arrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
+            model = arrayModelLongBasename(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DAA
-            model = denseAxisArrayModel(coeff, bound, n, directMode, optimization, optimizer)
+            model = denseAxisArrayModel(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DAAL
-            model = denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
+            model = denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DAALS
-            model = denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization, optimizer)
+            model = denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DAALB
-            model = denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
+            model = denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DAAS20
-            model = denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
+            model = denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization)
         elseif dataTypeID == D
-            model = dictModel(coeff, bound, n, directMode, optimization, optimizer)
+            model = dictModel(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == DS
-            model = dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
+            model = dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization)
         elseif dataTypeID == DD
-            model = dictionaryModel(coeff, bound, n, directMode, optimization, optimizer)
+            model = dictionaryModel(coeff, bound, n, directMode, optimization)
         elseif dataTypeID == ND
-            model = namedDimsModel(coeff, bound, n, directMode, optimization, optimizer)
+            model = namedDimsModel(coeff, bound, n, directMode, optimization)
         end
 
         JuMP.write_to_file(model, LpFile)
@@ -71,42 +71,6 @@ function Test(testSpec::TestSpec)
 
         empty!(model)
         println(".lp file was saved succesfully")
-    end
-
-    if writeProfileLog == true
-        Profile.clear()
-        
-        if dataTypeID == A
-            @profile arrayModel(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == AL
-            @profile arrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == ALB
-            @profile arrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DAA
-            @profile denseAxisArrayModel(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DAAL
-            @profile denseAxisArrayModelLongName(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DAALS
-            @profile denseAxisArrayModelLongNameShortBasename(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DAALB
-            @profile denseAxisArrayModelLongBasename(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DAAS20
-            @profile denseAxisArrayModelStr20(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
-        elseif dataTypeID == D
-            @profile dictModel(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == DS
-            @profile dictModelStr(coeff, bound, str_obj, str_con, directMode, optimization, optimizer)
-        elseif dataTypeID == DD
-            @profile dictionaryModel(coeff, bound, n, directMode, optimization, optimizer)
-        elseif dataTypeID == ND
-            @profile namedDimsModel(coeff, bound, n, directMode, optimization, optimizer)
-        end
-
-        profileDir =  string("Results/ProfileLogs/", string(dataTypeID) ,"/", string(dataTypeID) ,"_", problemNbr ,".txt")
-		open(Profile.print, profileDir, "w")
-        Profile.init()
-        
-        println("profile log was saved succesfully")
     end
 
     if writeToExcel == true
