@@ -55,7 +55,7 @@ function arrayModelLongName(coeff::Array{Float64,2}, bound::Array{Float64,1}, n:
 	end
 
 	@variable(m, 0<= verylooooooooongname[1:n]<=1,base_name = "x")
-	@constraint(m, con[i = 1:n], sum(coeff[i,:].*verylooooooooongname) <= bound[i] )
+	@constraint(m, con[i = 1:n], sum(coeff[i,j]*verylooooooooongname[j] for j in 1:n) <= bound[i] )
 
 
 	@objective(m, Max, sum(verylooooooooongname))
@@ -85,7 +85,7 @@ function arrayModelLongBasename(coeff::Array{Float64,2}, bound::Array{Float64,1}
 	end
 
 	@variable(m, 0<= x[1:n]<=1,base_name = "VERYLOOOOOOOOONGNAME")
-	@constraint(m, con[i = 1:n], sum(coeff[i,:].*x) <= bound[i] )
+	@constraint(m, con[i = 1:n], sum(coeff[i,j]*x[j] for j in 1:n) <= bound[i] )
 
 
 	obj = @objective(m, Max, sum(x))
