@@ -25,7 +25,7 @@ function arrayModel(coeff::Array{Float64,2}, bound::Array{Float64,1}, n::Int64, 
 	end
 
 	@variable(m,0<= x[1:n]<=1)
-	@constraint(m, con[i = 1:n], sum(coeff[i,j].*x[j] for j = 1:n) <= bound[i] )
+	@constraint(m, con[i = 1:n], sum(coeff[i,j]*x[j] for j = 1:n) <= bound[i] )
 
 	@objective(m, Max, sum(x))
 
